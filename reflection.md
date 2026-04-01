@@ -19,6 +19,18 @@ The UML diagram includes five classes: `Task`, `Pet`, `Owner`, `DailyPlan`, and 
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
 
+After reviewing the skeleton (`pawpal_system.py`) against the full requirements, several gaps were identified and the design was updated:
+
+1. **`Task` was missing `frequency` and `completed`** — The initial design only tracked title, duration, and priority. To properly represent a care activity, `frequency: str` (e.g. "daily", "weekly") and `completed: bool` were added.
+
+2. **`Pet` had no task list** — The initial `Pet` only stored name and species. A `tasks: list[Task]` field was added so each pet owns its own care tasks, matching the requirement that Pet "stores pet details and a list of tasks."
+
+3. **`Owner` managed a single implicit pet, not multiple** — The initial design had no `pets` field. This was changed to `pets: list[Pet]` to support multiple pets. A `get_all_tasks()` method was also added to aggregate tasks across all pets, making `Owner` the entry point for the scheduler.
+
+4. **`Scheduler` was updated to use `owner.get_all_tasks()`** — The `generate_plan()` method now accepts an optional `tasks` argument for backwards compatibility, but defaults to pulling tasks from `owner.get_all_tasks()`, making the scheduler truly pet-aware.
+
+These changes were made because the original design did not fully reflect the intended responsibilities of each class.
+
 ---
 
 ## 2. Scheduling Logic and Tradeoffs

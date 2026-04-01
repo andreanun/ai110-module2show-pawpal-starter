@@ -1,5 +1,5 @@
 import streamlit as st
-from models import Task, Pet, Owner
+from pawpal_system import Task, Pet, Owner
 from scheduler import Scheduler
 
 st.set_page_config(page_title="PawPal+", page_icon="🐾", layout="centered")

@@ -1,13 +1,20 @@
-from models import Task, Owner, DailyPlan, PRIORITY_RANK
+from pawpal_system import Task, Owner, DailyPlan, PRIORITY_RANK
 
 
 class Scheduler:
-    def generate_plan(self, owner: Owner, tasks: list[Task]) -> DailyPlan:
+    def generate_plan(self, owner: Owner, tasks: list[Task] | None = None) -> DailyPlan:
+        """
+        Generate a daily plan for the owner.
+        If tasks is provided, use that list directly.
+        Otherwise, aggregate tasks from all of the owner's pets.
+        """
         plan = DailyPlan()
         remaining = owner.available_minutes
 
+        all_tasks = tasks if tasks is not None else owner.get_all_tasks()
+
         sorted_tasks = sorted(
-            tasks,
+            all_tasks,
             key=lambda t: (-PRIORITY_RANK[t.priority], t.duration_minutes)
         )
 
