@@ -45,6 +45,10 @@ These changes were made because the original design did not fully reflect the in
 - Describe one tradeoff your scheduler makes.
 - Why is that tradeoff reasonable for this scenario?
 
+The conflict detection strategy checks for **exact start_time matches** rather than overlapping durations. For example, a 30-minute task starting at 08:00 and a 10-minute task starting at 08:15 would not be flagged as a conflict, even though they overlap.
+
+This is a deliberate tradeoff: exact-match detection is simple, fast, and doesn't crash the program — it returns a warning string and lets the user decide what to do. A full overlap check would require tracking task end times and comparing intervals, which adds complexity without much practical benefit for a daily care planner where tasks are rarely scheduled with minute-level precision. For this scenario, the simpler approach is reasonable.
+
 ---
 
 ## 3. AI Collaboration

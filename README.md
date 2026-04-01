@@ -32,6 +32,15 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+## Smarter Scheduling
+
+Beyond the basic greedy planner, the scheduler includes three additional capabilities:
+
+- **Sort by time** — `Scheduler.sort_by_time(tasks)` sorts any task list by `start_time` (HH:MM) using a lambda key, placing tasks with no fixed time at the end.
+- **Filter tasks** — `Scheduler.filter_tasks(tasks, completed=, pet_name=, owner=)` returns tasks matching a completion status and/or a specific pet's task list.
+- **Conflict detection** — `Scheduler.detect_conflicts(tasks)` checks for exact `start_time` collisions and returns human-readable warning strings instead of crashing.
+- **Recurring task auto-creation** — Calling `task.mark_complete()` on a `daily` or `weekly` task returns a new `Task` instance scheduled for the next occurrence, calculated with Python's `timedelta`.
+
 ### Suggested workflow
 
 1. Read the scenario carefully and identify requirements and edge cases.
