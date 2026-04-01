@@ -1,5 +1,23 @@
 # PawPal+ (Module 2 Project)
 
+A smart pet care planner built with Python and Streamlit.
+
+## Features
+
+- **Priority-based scheduling** — Tasks are sorted by priority (high → medium → low) and greedily scheduled within the owner's daily time budget. Lower-priority tasks are automatically skipped when time runs out.
+- **Sorting by start time** — All tasks with a set `HH:MM` start time are displayed in chronological order, giving the owner a clear view of their day.
+- **Conflict warnings** — The scheduler detects when two tasks share the same start time and surfaces a visible warning in the UI before the schedule is shown, so the owner can adjust times proactively.
+- **Daily & weekly recurrence** — Marking a `daily` or `weekly` task complete automatically generates the next occurrence using Python's `timedelta`, so recurring care routines are never forgotten.
+- **Task filtering** — Tasks can be filtered by completion status or by pet name, enabling targeted views across multi-pet households.
+- **Transparent reasoning** — Every scheduling decision (added or skipped) is explained in plain language so the owner understands why the plan looks the way it does.
+- **Multi-pet support** — An `Owner` manages a list of `Pet` objects, each with their own task list. The scheduler aggregates tasks across all pets for a unified daily plan.
+
+## 📸 Demo
+
+![PawPal+ Streamlit UI](assets/demo.png)
+
+---
+
 You are building **PawPal+**, a Streamlit app that helps a pet owner plan care tasks for their pet.
 
 ## Scenario
