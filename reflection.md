@@ -4,8 +4,15 @@
 
 **a. Initial design**
 
-- Briefly describe your initial UML design.
-- What classes did you include, and what responsibilities did you assign to each?
+The system was designed around three core user actions:
+
+1. **Set up owner & pet info** — The user enters their name, their pet's name and species, and how many minutes they have available that day. This establishes the scheduling constraint (time budget) and personalizes the experience. Represented by the `Owner` and `Pet` classes.
+
+2. **Add care tasks** — The user defines what needs to be done by specifying a task title, duration in minutes, and priority level (low / medium / high). Each task is represented by the `Task` class, which holds exactly these three attributes.
+
+3. **Generate a daily schedule** — The user triggers the scheduler, which selects and orders tasks based on priority and available time. The `Scheduler` class produces a `DailyPlan` that shows which tasks were scheduled, which were skipped, and the reasoning behind every decision.
+
+The UML diagram includes five classes: `Task`, `Pet`, `Owner`, `DailyPlan`, and `Scheduler`. `Scheduler` depends on `Owner` and `Task` as inputs and produces a `DailyPlan`. `DailyPlan` holds references to scheduled and skipped `Task` objects. `Owner` is associated with one `Pet`.
 
 **b. Design changes**
 
