@@ -9,7 +9,7 @@ st.markdown("Your daily pet care planner.")
 
 st.divider()
 
-# --- Owner + Pet Info ---
+# --- Owner & Pet Info ---
 st.subheader("Owner & Pet Info")
 col1, col2 = st.columns(2)
 with col1:
@@ -27,18 +27,23 @@ st.subheader("Tasks")
 if "tasks" not in st.session_state:
     st.session_state.tasks = []
 
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns([3, 2, 2, 2])
 with col1:
     task_title = st.text_input("Task title", value="Morning walk")
 with col2:
-    duration = st.number_input("Duration (minutes)", min_value=1, max_value=240, value=20)
+    duration = st.number_input("Duration (min)", min_value=1, max_value=240, value=20)
 with col3:
     priority = st.selectbox("Priority", ["low", "medium", "high"], index=2)
+with col4:
+    start_time = st.text_input("Start time (HH:MM)", value="", placeholder="e.g. 08:00")
 
 if st.button("Add task"):
-    st.session_state.tasks.append(
-        {"title": task_title, "duration_minutes": int(duration), "priority": priority}
-    )
+    st.session_state.tasks.append({
+        "title": task_title,
+        "duration_minutes": int(duration),
+        "priority": priority,
+        "start_time": start_time.strip(),
+    })
 
 if st.session_state.tasks:
     st.write("Current tasks:")
@@ -58,17 +63,51 @@ if st.button("Generate schedule", type="primary"):
     if not st.session_state.tasks:
         st.warning("Add at least one task before generating a schedule.")
     else:
+        scheduler = Scheduler()
+
         owner = Owner(name=owner_name, available_minutes=int(available_minutes))
         pet = Pet(name=pet_name, species=species)
         tasks = [
-            Task(title=t["title"], duration_minutes=t["duration_minutes"], priority=t["priority"])
+            Task(
+                title=t["title"],
+                duration_minutes=t["duration_minutes"],
+                priority=t["priority"],
+                start_time=t.get("start_time", ""),
+            )
             for t in st.session_state.tasks
         ]
 
-        plan = Scheduler().generate_plan(owner, tasks)
+        # --- Conflict warnings (shown before the plan) ---
+        conflicts = scheduler.detect_conflicts(tasks)
+        if conflicts:
+            st.error("**Scheduling Conflicts Detected**")
+            for warning in conflicts:
+                st.warning(warning)
+            st.caption(
+                "Two or more tasks are scheduled at the same time. "
+                "Consider adjusting their start times before the day begins."
+            )
+
+        # --- Sorted task view ---
+        timed_tasks = [t for t in tasks if t.start_time]
+        if timed_tasks:
+            st.markdown("#### Tasks by Start Time")
+            sorted_tasks = scheduler.sort_by_time(tasks)
+            st.table([
+                {
+                    "Start Time": t.start_time if t.start_time else "—",
+                    "Task": t.title,
+                    "Duration (min)": t.duration_minutes,
+                    "Priority": t.priority,
+                }
+                for t in sorted_tasks
+            ])
+
+        # --- Generate plan ---
+        plan = scheduler.generate_plan(owner, tasks)
 
         st.success(
-            f"Scheduled {len(plan.scheduled)} of {len(tasks)} tasks "
+            f"Scheduled **{len(plan.scheduled)}** of {len(tasks)} tasks "
             f"({plan.total_minutes} / {available_minutes} min used)"
         )
 
